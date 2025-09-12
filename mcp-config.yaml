@@ -1,0 +1,56 @@
+# MCP Server Configuration
+# Primary integration: Composio
+
+servers:
+  composio:
+    name: "Composio MCP Server"
+    enabled: true
+    priority: 1
+    type: "primary"
+    description: "Main tool integration via Composio"
+    startup:
+      command: "npx"
+      args: ["composio-mcp"]
+      env:
+        COMPOSIO_API_KEY: "${COMPOSIO_API_KEY}"
+    tools:
+      - apify
+      - email_validation
+      - web_scraping
+      - database_operations
+      - llm_integration
+    
+  apify:
+    name: "Apify MCP Server"
+    enabled: false  # Disabled - using Composio instead
+    priority: 10
+    type: "fallback"
+    port: 3001
+    
+  email_validator:
+    name: "Email Validator MCP Server"
+    enabled: false  # Disabled - using Composio instead
+    priority: 10
+    type: "fallback"
+    port: 3004
+    
+  neon:
+    name: "Neon Database MCP Server"
+    enabled: false  # Disabled - using Composio instead
+    priority: 10
+    type: "fallback"
+    port: 3008
+
+# Global settings
+settings:
+  default_server: "composio"
+  auto_fallback: false
+  build_custom_tools: false  # Prevent building new tools
+  use_existing_integrations: true
+  log_level: "info"
+  
+# Doctrine enforcement
+doctrine:
+  use_mcp_only: true
+  no_llm_runtime: true
+  composio_first: true

@@ -1,0 +1,209 @@
+{
+  "plan_id": "clients_intake_orchestration",
+  "version": "1.0.0",
+  "description": "Client intake orchestration with fixed altitude callpoints",
+  "metadata": {
+    "created_at": "2025-08-19T14:30:00Z",
+    "updated_at": "2025-08-19T14:30:00Z", 
+    "created_by": "garage-mcp-orchestration",
+    "tags": ["intake", "orchestration", "altitude", "clients"]
+  },
+  "steps": [
+    {
+      "step_id": "A1_overall_route",
+      "altitude": 30000,
+      "agent_id": "overall-orchestrator",
+      "action": "route_to_input_stage",
+      "when": {
+        "condition": "always"
+      },
+      "parameters": {
+        "target_stage": "input",
+        "routing_criteria": "client_intake"
+      },
+      "timeout_seconds": 60,
+      "retry_policy": {
+        "max_retries": 1,
+        "backoff_seconds": 5,
+        "retry_on": ["timeout"]
+      }
+    },
+    {
+      "step_id": "B1_input_orchestration",
+      "altitude": 20000,
+      "agent_id": "input-orchestrator", 
+      "action": "coordinate_input_subflow",
+      "when": {
+        "condition": "on_success",
+        "depends_on": ["A1_overall_route"]
+      },
+      "parameters": {
+        "subflow": "mapper_validator_sequence"
+      },
+      "timeout_seconds": 180
+    },
+    {
+      "step_id": "B2_input_mapper",
+      "altitude": 20000,
+      "agent_id": "input-subagent-mapper",
+      "action": "map_client_data",
+      "when": {
+        "condition": "on_success",
+        "depends_on": ["B1_input_orchestration"]
+      },
+      "parameters": {
+        "mapping_schema": "client_intake_v1",
+        "normalization_rules": "standard"
+      },
+      "timeout_seconds": 120,
+      "retry_policy": {
+        "max_retries": 2,
+        "backoff_seconds": 10
+      }
+    },
+    {
+      "step_id": "B3_input_validator",
+      "altitude": 20000,
+      "agent_id": "input-subagent-validator",
+      "action": "validate_mapped_data", 
+      "when": {
+        "condition": "on_success",
+        "depends_on": ["B2_input_mapper"]
+      },
+      "parameters": {
+        "validation_schema": "client_intake_v1",
+        "heir_compliance": true
+      },
+      "timeout_seconds": 90
+    },
+    {
+      "step_id": "C1_middle_orchestration",
+      "altitude": 10000,
+      "agent_id": "middle-orchestrator",
+      "action": "coordinate_middle_subflow", 
+      "when": {
+        "condition": "on_success",
+        "depends_on": ["B3_input_validator"]
+      },
+      "parameters": {
+        "subflow": "db_plan_enforcer_sequence"
+      },
+      "timeout_seconds": 300
+    },
+    {
+      "step_id": "C2_middle_db_plan",
+      "altitude": 10000,
+      "agent_id": "middle-subagent-db",
+      "action": "plan_database_changes",
+      "when": {
+        "condition": "on_success", 
+        "depends_on": ["C1_middle_orchestration"]
+      },
+      "parameters": {
+        "mode": "plan",
+        "dry_run": true,
+        "rollback_plan": true
+      },
+      "timeout_seconds": 180,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_seconds": 15
+      }
+    },
+    {
+      "step_id": "C3_middle_enforcer",
+      "altitude": 10000,
+      "agent_id": "middle-subagent-enforcer",
+      "action": "enforce_business_rules",
+      "when": {
+        "condition": "on_success",
+        "depends_on": ["C2_middle_db_plan"]
+      },
+      "parameters": {
+        "rules_engine": "client_intake_rules",
+        "promotion_decision": true
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "step_id": "C4_middle_db_apply", 
+      "altitude": 10000,
+      "agent_id": "middle-subagent-db",
+      "action": "apply_database_changes",
+      "when": {
+        "condition": "conditional",
+        "expression": "enforcer.promotion_decision == true",
+        "depends_on": ["C3_middle_enforcer"]
+      },
+      "parameters": {
+        "mode": "apply",
+        "use_planned_changes": true,
+        "transaction": true
+      },
+      "timeout_seconds": 240,
+      "retry_policy": {
+        "max_retries": 1,
+        "backoff_seconds": 30
+      }
+    },
+    {
+      "step_id": "D1_output_orchestration",
+      "altitude": 5000, 
+      "agent_id": "output-orchestrator",
+      "action": "coordinate_output_subflow",
+      "when": {
+        "condition": "on_success",
+        "depends_on": ["C3_middle_enforcer"]
+      },
+      "parameters": {
+        "subflow": "notifier_reporter_sequence"
+      },
+      "timeout_seconds": 180
+    },
+    {
+      "step_id": "D2_output_notifier",
+      "altitude": 5000,
+      "agent_id": "output-subagent-notifier", 
+      "action": "send_notifications",
+      "when": {
+        "condition": "on_success",
+        "depends_on": ["D1_output_orchestration"]
+      },
+      "parameters": {
+        "notification_type": "client_intake_completed",
+        "channels": ["email", "slack", "webhook"]
+      },
+      "timeout_seconds": 60,
+      "retry_policy": {
+        "max_retries": 3,
+        "backoff_seconds": 5
+      }
+    },
+    {
+      "step_id": "D3_output_reporter",
+      "altitude": 5000,
+      "agent_id": "output-subagent-reporter",
+      "action": "generate_intake_report",
+      "when": {
+        "condition": "on_success", 
+        "depends_on": ["D2_output_notifier"]
+      },
+      "parameters": {
+        "report_template": "client_intake_summary",
+        "artifact_path": "reports/intake/",
+        "git_commit": true
+      },
+      "timeout_seconds": 90
+    }
+  ],
+  "error_handling": {
+    "on_failure": "halt",
+    "rollback_steps": ["C4_middle_db_apply"],
+    "notification_on_error": true
+  },
+  "validation": {
+    "require_altitude_sequence": true,
+    "allow_altitude_skip": false,
+    "enforce_agent_bindings": true
+  }
+}

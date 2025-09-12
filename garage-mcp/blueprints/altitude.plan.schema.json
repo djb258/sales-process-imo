@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Altitude Orchestration Plan Schema",
+  "description": "Schema for altitude-based orchestration plans with fixed callpoints",
+  "type": "object",
+  "required": ["plan_id", "version", "description", "steps"],
+  "properties": {
+    "plan_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Plan identifier (used in process_id generation)"
+    },
+    "version": {
+      "type": "string",
+      "description": "Plan version (semantic versioning)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable plan description"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "created_at": {"type": "string", "format": "date-time"},
+        "updated_at": {"type": "string", "format": "date-time"},
+        "created_by": {"type": "string"},
+        "tags": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "steps": {
+      "type": "array",
+      "description": "Ordered sequence of orchestration steps",
+      "items": {
+        "type": "object",
+        "required": ["step_id", "altitude", "agent_id", "action"],
+        "properties": {
+          "step_id": {
+            "type": "string",
+            "description": "Unique step identifier within plan"
+          },
+          "altitude": {
+            "type": "integer",
+            "enum": [30000, 20000, 10000, 5000],
+            "description": "Orchestration altitude level"
+          },
+          "agent_id": {
+            "type": "string",
+            "description": "Agent or orchestrator identifier"
+          },
+          "action": {
+            "type": "string",
+            "description": "Action to perform"
+          },
+          "when": {
+            "type": "object",
+            "description": "Conditional execution criteria",
+            "properties": {
+              "condition": {
+                "type": "string",
+                "enum": ["always", "on_success", "on_failure", "conditional"],
+                "default": "always"
+              },
+              "expression": {
+                "type": "string",
+                "description": "Conditional expression (when condition is 'conditional')"
+              },
+              "depends_on": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Step IDs this step depends on"
+              }
+            }
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Step-specific parameters"
+          },
+          "timeout_seconds": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 120,
+            "description": "Step timeout in seconds"
+          },
+          "retry_policy": {
+            "type": "object",
+            "description": "Retry configuration",
+            "properties": {
+              "max_retries": {"type": "integer", "minimum": 0, "default": 2},
+              "backoff_seconds": {"type": "integer", "minimum": 1, "default": 5},
+              "retry_on": {
+                "type": "array", 
+                "items": {"type": "string"},
+                "default": ["timeout", "agent_failure"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "error_handling": {
+      "type": "object",
+      "description": "Plan-level error handling configuration",
+      "properties": {
+        "on_failure": {
+          "type": "string",
+          "enum": ["halt", "continue", "rollback"],
+          "default": "halt",
+          "description": "Action to take on step failure"
+        },
+        "rollback_steps": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Steps to execute on rollback"
+        },
+        "notification_on_error": {
+          "type": "boolean",
+          "default": true,
+          "description": "Send notifications on errors"
+        }
+      }
+    },
+    "validation": {
+      "type": "object", 
+      "description": "Plan validation rules",
+      "properties": {
+        "require_altitude_sequence": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enforce altitude sequence (30k → 20k → 10k → 5k)"
+        },
+        "allow_altitude_skip": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow skipping altitude levels"
+        },
+        "enforce_agent_bindings": {
+          "type": "boolean",
+          "default": true,
+          "description": "Validate agent IDs against bindings registry"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

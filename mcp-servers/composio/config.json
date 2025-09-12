@@ -1,0 +1,23 @@
+{
+  "name": "composio-mcp",
+  "description": "Composio MCP Server for integrated tool access",
+  "enabled": true,
+  "priority": 1,
+  "config": {
+    "apiKey": "${COMPOSIO_API_KEY}",
+    "defaultTools": [
+      "apify",
+      "email_validator",
+      "database",
+      "web_scraper",
+      "llm_bridge"
+    ],
+    "autoConnect": true,
+    "useAsDefault": true
+  },
+  "endpoints": {
+    "main": "http://localhost:3000",
+    "tools": "http://localhost:3001",
+    "health": "http://localhost:3000/health"
+  }
+}
