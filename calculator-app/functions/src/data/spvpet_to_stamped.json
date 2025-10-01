@@ -1,0 +1,563 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "description": "SPVPET (Firebase) to STAMPED (Neon) schema mapping configuration for IMO Calculator promotion layer",
+  "version": "1.0.0",
+  "doctrine": {
+    "source": "SPVPET",
+    "target": "STAMPED",
+    "compliance": "Barton Doctrine + HEIR",
+    "audit_required": true
+  },
+  "mappings": {
+    "clients": {
+      "description": "Company-level data mapping from factfinder to Neon clients table",
+      "source_collection": "factfinder",
+      "target_table": "clients",
+      "fields": [
+        {
+          "source": "prospect_id",
+          "target": "client_id",
+          "section_number": 1,
+          "column_number": 1,
+          "column_description": "Unique client identifier promoted from prospect_id",
+          "column_format": "string (UUID)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "company.name",
+          "target": "company_name",
+          "section_number": 1,
+          "column_number": 2,
+          "column_description": "Legal company name",
+          "column_format": "string (max 255)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "company.ein",
+          "target": "company_ein",
+          "section_number": 1,
+          "column_number": 3,
+          "column_description": "Federal Employer Identification Number",
+          "column_format": "string (XX-XXXXXXX)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "format_ein"
+        },
+        {
+          "source": "company.industry",
+          "target": "industry_classification",
+          "section_number": 1,
+          "column_number": 4,
+          "column_description": "Industry classification code or name",
+          "column_format": "string (max 100)",
+          "timestamp_last_touched": "auto",
+          "required": false,
+          "transformation": "direct"
+        },
+        {
+          "source": "company.employeeCount",
+          "target": "employee_count",
+          "section_number": 1,
+          "column_number": 5,
+          "column_description": "Total number of employees (census count)",
+          "column_format": "integer",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "company.state",
+          "target": "primary_state",
+          "section_number": 1,
+          "column_number": 6,
+          "column_description": "Primary state of operation",
+          "column_format": "string (2-letter state code)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "uppercase"
+        },
+        {
+          "source": "company.renewalDate",
+          "target": "renewal_date",
+          "section_number": 1,
+          "column_number": 7,
+          "column_description": "Policy renewal date",
+          "column_format": "date (ISO 8601)",
+          "timestamp_last_touched": "auto",
+          "required": false,
+          "transformation": "parse_date"
+        },
+        {
+          "source": "timestamp",
+          "target": "promotion_timestamp",
+          "section_number": 1,
+          "column_number": 8,
+          "column_description": "Timestamp when prospect was promoted to client",
+          "column_format": "timestamp (unix milliseconds)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        }
+      ]
+    },
+    "employees": {
+      "description": "Census-level employee data mapping",
+      "source_collection": "factfinder",
+      "target_table": "employees",
+      "fields": [
+        {
+          "source": "prospect_id",
+          "target": "client_id",
+          "section_number": 2,
+          "column_number": 1,
+          "column_description": "Foreign key reference to clients table",
+          "column_format": "string (UUID)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "census.employees[].id",
+          "target": "employee_id",
+          "section_number": 2,
+          "column_number": 2,
+          "column_description": "Unique employee identifier within census",
+          "column_format": "string (UUID or SSN-masked)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "census.employees[].age",
+          "target": "age",
+          "section_number": 2,
+          "column_number": 3,
+          "column_description": "Employee age at time of census",
+          "column_format": "integer",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "census.employees[].gender",
+          "target": "gender",
+          "section_number": 2,
+          "column_number": 4,
+          "column_description": "Employee gender for actuarial purposes",
+          "column_format": "string (M/F/X)",
+          "timestamp_last_touched": "auto",
+          "required": false,
+          "transformation": "uppercase"
+        },
+        {
+          "source": "census.employees[].dependents",
+          "target": "dependent_count",
+          "section_number": 2,
+          "column_number": 5,
+          "column_description": "Number of covered dependents",
+          "column_format": "integer",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "census.employees[].coverage_tier",
+          "target": "coverage_tier",
+          "section_number": 2,
+          "column_number": 6,
+          "column_description": "Coverage tier (employee, employee+spouse, family, etc.)",
+          "column_format": "string (max 50)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "census.employees[].annual_claims",
+          "target": "annual_claims_cost",
+          "section_number": 2,
+          "column_number": 7,
+          "column_description": "Total annual claims cost for employee and dependents",
+          "column_format": "decimal (precision 10, scale 2)",
+          "timestamp_last_touched": "auto",
+          "required": false,
+          "transformation": "parse_currency"
+        }
+      ]
+    },
+    "compliance_flags": {
+      "description": "Compliance requirements mapping (federal, state, local)",
+      "source_collection": "compliance",
+      "target_table": "compliance_flags",
+      "fields": [
+        {
+          "source": "prospect_id",
+          "target": "client_id",
+          "section_number": 3,
+          "column_number": 1,
+          "column_description": "Foreign key reference to clients table",
+          "column_format": "string (UUID)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "matched.federal[]",
+          "target": "federal_requirements",
+          "section_number": 3,
+          "column_number": 2,
+          "column_description": "Array of matched federal compliance requirements",
+          "column_format": "jsonb (array of objects)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "json_array"
+        },
+        {
+          "source": "matched.state[]",
+          "target": "state_requirements",
+          "section_number": 3,
+          "column_number": 3,
+          "column_description": "Array of matched state-specific requirements",
+          "column_format": "jsonb (array of objects)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "json_array"
+        },
+        {
+          "source": "matched.local[]",
+          "target": "local_requirements",
+          "section_number": 3,
+          "column_number": 4,
+          "column_description": "Array of matched local/municipal requirements",
+          "column_format": "jsonb (array of objects)",
+          "timestamp_last_touched": "auto",
+          "required": false,
+          "transformation": "json_array"
+        },
+        {
+          "source": "aca_applicable",
+          "target": "aca_applicable",
+          "section_number": 3,
+          "column_number": 5,
+          "column_description": "Whether ACA (Affordable Care Act) applies",
+          "column_format": "boolean",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "erisa_plan",
+          "target": "erisa_plan",
+          "section_number": 3,
+          "column_number": 6,
+          "column_description": "Whether plan is subject to ERISA",
+          "column_format": "boolean",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "timestamp",
+          "target": "compliance_check_date",
+          "section_number": 3,
+          "column_number": 7,
+          "column_description": "Date of compliance requirement matching",
+          "column_format": "timestamp (unix milliseconds)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        }
+      ]
+    },
+    "financial_models": {
+      "description": "Monte Carlo simulation and insurance split outputs",
+      "source_collection": "montecarlo,insurance_split",
+      "target_table": "financial_models",
+      "fields": [
+        {
+          "source": "prospect_id",
+          "target": "client_id",
+          "section_number": 4,
+          "column_number": 1,
+          "column_description": "Foreign key reference to clients table",
+          "column_format": "string (UUID)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "montecarlo.summary.p50",
+          "target": "mc_p50_cost",
+          "section_number": 4,
+          "column_number": 2,
+          "column_description": "Monte Carlo 50th percentile (median) projected cost",
+          "column_format": "decimal (precision 12, scale 2)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "parse_currency"
+        },
+        {
+          "source": "montecarlo.summary.p95",
+          "target": "mc_p95_cost",
+          "section_number": 4,
+          "column_number": 3,
+          "column_description": "Monte Carlo 95th percentile projected cost (high risk)",
+          "column_format": "decimal (precision 12, scale 2)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "parse_currency"
+        },
+        {
+          "source": "montecarlo.iterations",
+          "target": "mc_iterations",
+          "section_number": 4,
+          "column_number": 4,
+          "column_description": "Number of Monte Carlo simulation iterations",
+          "column_format": "integer",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "montecarlo.volatility",
+          "target": "mc_volatility_factor",
+          "section_number": 4,
+          "column_number": 5,
+          "column_description": "Volatility factor used in simulation",
+          "column_format": "decimal (precision 5, scale 4)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "insurance_split.high_utilizers.count",
+          "target": "high_cost_utilizer_count",
+          "section_number": 4,
+          "column_number": 6,
+          "column_description": "Count of employees in 10% high utilizer group",
+          "column_format": "integer",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "insurance_split.high_utilizers.cost_total",
+          "target": "high_cost_utilizers_total",
+          "section_number": 4,
+          "column_number": 7,
+          "column_description": "Total cost attributed to 10% high utilizers (85% rule)",
+          "column_format": "decimal (precision 12, scale 2)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "parse_currency"
+        },
+        {
+          "source": "insurance_split.low_utilizers.count",
+          "target": "low_cost_utilizer_count",
+          "section_number": 4,
+          "column_number": 8,
+          "column_description": "Count of employees in 90% low utilizer group",
+          "column_format": "integer",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "insurance_split.low_utilizers.cost_total",
+          "target": "low_cost_utilizers_total",
+          "section_number": 4,
+          "column_number": 9,
+          "column_description": "Total cost attributed to 90% low utilizers (15% rule)",
+          "column_format": "decimal (precision 12, scale 2)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "parse_currency"
+        },
+        {
+          "source": "timestamp",
+          "target": "model_run_timestamp",
+          "section_number": 4,
+          "column_number": 10,
+          "column_description": "Timestamp when financial models were executed",
+          "column_format": "timestamp (unix milliseconds)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        }
+      ]
+    },
+    "savings_scenarios": {
+      "description": "Retrospective and forward-looking savings calculations",
+      "source_collection": "savings_scenarios",
+      "target_table": "savings_scenarios",
+      "fields": [
+        {
+          "source": "prospect_id",
+          "target": "client_id",
+          "section_number": 5,
+          "column_number": 1,
+          "column_description": "Foreign key reference to clients table",
+          "column_format": "string (UUID)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "retro.total_savings",
+          "target": "retro_total_savings",
+          "section_number": 5,
+          "column_number": 2,
+          "column_description": "Retrospective total savings amount",
+          "column_format": "decimal (precision 12, scale 2)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "parse_currency"
+        },
+        {
+          "source": "retro.percent_saved",
+          "target": "retro_percent_saved",
+          "section_number": 5,
+          "column_number": 3,
+          "column_description": "Retrospective savings as percentage of baseline",
+          "column_format": "decimal (precision 5, scale 2)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        },
+        {
+          "source": "forward.projected_savings_year1",
+          "target": "forward_savings_year1",
+          "section_number": 5,
+          "column_number": 4,
+          "column_description": "Forward-looking projected savings for year 1",
+          "column_format": "decimal (precision 12, scale 2)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "parse_currency"
+        },
+        {
+          "source": "forward.projected_savings_year3",
+          "target": "forward_savings_year3",
+          "section_number": 5,
+          "column_number": 5,
+          "column_description": "Forward-looking projected savings for year 3",
+          "column_format": "decimal (precision 12, scale 2)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "parse_currency"
+        },
+        {
+          "source": "forward.projected_savings_year5",
+          "target": "forward_savings_year5",
+          "section_number": 5,
+          "column_number": 6,
+          "column_description": "Forward-looking projected savings for year 5",
+          "column_format": "decimal (precision 12, scale 2)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "parse_currency"
+        },
+        {
+          "source": "assumptions.trend_factor",
+          "target": "trend_factor",
+          "section_number": 5,
+          "column_number": 7,
+          "column_description": "Healthcare cost trend factor used in projections",
+          "column_format": "decimal (precision 5, scale 4)",
+          "timestamp_last_touched": "auto",
+          "required": false,
+          "transformation": "direct"
+        },
+        {
+          "source": "timestamp",
+          "target": "calculation_timestamp",
+          "section_number": 5,
+          "column_number": 8,
+          "column_description": "Timestamp when savings scenarios were calculated",
+          "column_format": "timestamp (unix milliseconds)",
+          "timestamp_last_touched": "auto",
+          "required": true,
+          "transformation": "direct"
+        }
+      ]
+    }
+  },
+  "transformations": {
+    "direct": {
+      "description": "Pass value directly without modification"
+    },
+    "format_ein": {
+      "description": "Format EIN as XX-XXXXXXX (add hyphen if missing)"
+    },
+    "uppercase": {
+      "description": "Convert string to uppercase"
+    },
+    "parse_date": {
+      "description": "Parse date string to ISO 8601 format"
+    },
+    "parse_currency": {
+      "description": "Parse currency value to decimal, removing $ and commas"
+    },
+    "json_array": {
+      "description": "Convert array to JSONB format for Postgres"
+    }
+  },
+  "audit_schema": {
+    "table": "promotion_log",
+    "fields": [
+      {
+        "name": "promotion_id",
+        "type": "uuid",
+        "description": "Unique promotion event identifier"
+      },
+      {
+        "name": "prospect_id",
+        "type": "string",
+        "description": "Source prospect ID from Firebase"
+      },
+      {
+        "name": "client_id",
+        "type": "string",
+        "description": "Target client ID in Neon"
+      },
+      {
+        "name": "promotion_timestamp",
+        "type": "timestamp",
+        "description": "When promotion event occurred"
+      },
+      {
+        "name": "agent_execution_signature",
+        "type": "string",
+        "description": "Agent or service that executed promotion"
+      },
+      {
+        "name": "schema_version",
+        "type": "string",
+        "description": "Version of this mapping schema used"
+      },
+      {
+        "name": "blueprint_version_hash",
+        "type": "string",
+        "description": "Hash of blueprint configuration at promotion time"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "Promotion status (pending, completed, failed, rolled_back)"
+      },
+      {
+        "name": "error_message",
+        "type": "text",
+        "description": "Error details if promotion failed"
+      },
+      {
+        "name": "records_inserted",
+        "type": "jsonb",
+        "description": "Count of records inserted per table"
+      }
+    ]
+  }
+}
