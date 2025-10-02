@@ -1,0 +1,88 @@
+{
+  "apiKey": "BUILDER_API_KEY",
+  "projectId": "SALES_PROJECT_ID",
+  "organizationId": "SALES_ORG_ID",
+  "sync": {
+    "enabled": true,
+    "targets": [
+      {
+        "file": "calculator-app/src/components/DashboardEnhanced.tsx",
+        "model": "sales_dashboard",
+        "componentName": "DashboardEnhanced",
+        "description": "Main dashboard for IMO Calculator with tabs and charts"
+      },
+      {
+        "file": "calculator-app/src/components/Factfinder.tsx",
+        "model": "sales_factfinder",
+        "componentName": "Factfinder",
+        "description": "Lead capture form for prospect data collection"
+      },
+      {
+        "file": "calculator-app/src/components/SniperMarketing.tsx",
+        "model": "sales_sniper_marketing",
+        "componentName": "SniperMarketing",
+        "description": "Dynamic marketing narratives with CTA"
+      },
+      {
+        "file": "calculator-app/src/components/ComplianceChecklist.tsx",
+        "model": "sales_compliance_checklist",
+        "componentName": "ComplianceChecklist",
+        "description": "Compliance requirements display"
+      },
+      {
+        "file": "calculator-app/src/components/charts/MonteCarloLineChart.tsx",
+        "model": "sales_chart_montecarlo",
+        "componentName": "MonteCarloLineChart",
+        "description": "Monte Carlo simulation visualization"
+      },
+      {
+        "file": "calculator-app/src/components/charts/InsuranceSplitPieChart.tsx",
+        "model": "sales_chart_insurance_split",
+        "componentName": "InsuranceSplitPieChart",
+        "description": "Insurance cost split pie chart"
+      },
+      {
+        "file": "calculator-app/src/components/charts/SavingsImpactBarChart.tsx",
+        "model": "sales_chart_savings",
+        "componentName": "SavingsImpactBarChart",
+        "description": "Savings impact bar chart"
+      }
+    ],
+    "outputDir": ".builder",
+    "autoSync": true,
+    "watchMode": true
+  },
+  "preview": {
+    "port": 3000,
+    "url": "http://localhost:3000",
+    "command": "cd calculator-app && npm run dev"
+  },
+  "schema": {
+    "customFields": [
+      {
+        "name": "prospectId",
+        "type": "string",
+        "description": "Prospect ID from Firestore"
+      },
+      {
+        "name": "colors",
+        "type": "object",
+        "description": "Theme color configuration"
+      },
+      {
+        "name": "features",
+        "type": "object",
+        "description": "Feature toggles"
+      }
+    ]
+  },
+  "mcp": {
+    "enabled": true,
+    "serverUrl": "http://localhost:3001",
+    "context": "sales-ui",
+    "endpoints": {
+      "tools": "/tool",
+      "health": "/mcp/health"
+    }
+  }
+}

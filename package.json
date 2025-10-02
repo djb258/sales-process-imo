@@ -187,5 +187,17 @@
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/djb258/sales-process-imo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/djb258/sales-process-imo/issues"
+  },
+  "homepage": "https://github.com/djb258/sales-process-imo#readme"
 }

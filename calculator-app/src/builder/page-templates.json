@@ -1,0 +1,561 @@
+{
+  "dashboardTemplate": {
+    "name": "IMO Dashboard",
+    "description": "Dynamic dashboard page with tabs, charts, and data display",
+    "model": "page",
+    "urlPath": "/dashboard/:prospectId",
+    "data": {
+      "blocks": [
+        {
+          "id": "header-section",
+          "component": {
+            "name": "Box",
+            "options": {
+              "style": {
+                "backgroundColor": "#ffffff",
+                "padding": "24px",
+                "borderBottom": "1px solid #e5e7eb",
+                "position": "sticky",
+                "top": 0,
+                "zIndex": 10
+              }
+            }
+          },
+          "children": [
+            {
+              "id": "header-title",
+              "component": {
+                "name": "Text",
+                "options": {
+                  "text": "<h1>IMO Calculator Dashboard</h1>",
+                  "style": {
+                    "fontSize": "28px",
+                    "fontWeight": "bold",
+                    "color": "#1f2937"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "dashboard-main",
+          "component": {
+            "name": "Dashboard Layout",
+            "options": {
+              "prospectId": "{{state.prospectId}}",
+              "defaultTab": "factfinder",
+              "colors": {
+                "primary": "#3b82f6",
+                "accent": "#8b5cf6",
+                "success": "#10b981",
+                "danger": "#ef4444"
+              },
+              "text": {
+                "mainTitle": "IMO Calculator Dashboard",
+                "exportButtonLabel": "Export to PDF"
+              },
+              "features": {
+                "showExportButton": true,
+                "showLoadingSpinner": true,
+                "enableRealTimeUpdates": true
+              },
+              "layout": {
+                "stickyHeader": true,
+                "maxWidth": "7xl",
+                "spacing": "normal"
+              }
+            }
+          }
+        }
+      ],
+      "state": {
+        "prospectId": {
+          "type": "string",
+          "default": "",
+          "description": "Prospect ID from URL parameter"
+        }
+      }
+    },
+    "meta": {
+      "title": "Dashboard | IMO Calculator",
+      "description": "View your insurance analysis and recommendations"
+    }
+  },
+  "factfinderTemplate": {
+    "name": "IMO Factfinder",
+    "description": "Factfinder form page for collecting prospect data",
+    "model": "page",
+    "urlPath": "/factfinder",
+    "data": {
+      "blocks": [
+        {
+          "id": "factfinder-hero",
+          "component": {
+            "name": "Box",
+            "options": {
+              "style": {
+                "background": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                "padding": "48px 24px",
+                "color": "white",
+                "textAlign": "center"
+              }
+            }
+          },
+          "children": [
+            {
+              "id": "hero-title",
+              "component": {
+                "name": "Text",
+                "options": {
+                  "text": "<h1>Get Your Custom Insurance Analysis</h1>",
+                  "style": {
+                    "fontSize": "36px",
+                    "fontWeight": "bold",
+                    "marginBottom": "16px"
+                  }
+                }
+              }
+            },
+            {
+              "id": "hero-subtitle",
+              "component": {
+                "name": "Text",
+                "options": {
+                  "text": "<p>Complete the form below to receive a comprehensive insurance cost analysis</p>",
+                  "style": {
+                    "fontSize": "18px",
+                    "opacity": 0.9
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "factfinder-container",
+          "component": {
+            "name": "Box",
+            "options": {
+              "style": {
+                "maxWidth": "800px",
+                "margin": "0 auto",
+                "padding": "48px 24px"
+              }
+            }
+          },
+          "children": [
+            {
+              "id": "factfinder-form",
+              "component": {
+                "name": "Factfinder Form",
+                "options": {
+                  "prospectId": "",
+                  "onSubmitSuccess": "/dashboard/:prospectId",
+                  "primaryColor": "#3b82f6",
+                  "formTitle": "Factfinder - Company Information",
+                  "submitButtonText": "Submit & Generate Report",
+                  "cardStyle": {
+                    "shadow": "xl",
+                    "rounded": "2xl",
+                    "padding": "8"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "meta": {
+      "title": "Factfinder | IMO Calculator",
+      "description": "Complete your factfinder to get started"
+    }
+  },
+  "sniperMarketingTemplate": {
+    "name": "Sniper Marketing Section",
+    "description": "Standalone Sniper Marketing page or section",
+    "model": "section",
+    "data": {
+      "blocks": [
+        {
+          "id": "sniper-header",
+          "component": {
+            "name": "Box",
+            "options": {
+              "style": {
+                "textAlign": "center",
+                "marginBottom": "48px"
+              }
+            }
+          },
+          "children": [
+            {
+              "id": "sniper-title",
+              "component": {
+                "name": "Text",
+                "options": {
+                  "text": "<h2>Strategic Recommendations</h2>",
+                  "style": {
+                    "fontSize": "32px",
+                    "fontWeight": "bold",
+                    "color": "#1f2937",
+                    "marginBottom": "12px"
+                  }
+                }
+              }
+            },
+            {
+              "id": "sniper-subtitle",
+              "component": {
+                "name": "Text",
+                "options": {
+                  "text": "<p>Personalized insights based on your data</p>",
+                  "style": {
+                    "fontSize": "18px",
+                    "color": "#6b7280"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "sniper-component",
+          "component": {
+            "name": "Sniper Marketing",
+            "options": {
+              "prospectId": "{{state.prospectId}}",
+              "sectionTitle": "Strategic Recommendations",
+              "cta": {
+                "title": "Ready to Take Action?",
+                "description": "Schedule a consultation to implement these strategies",
+                "buttonText": "Book a Call",
+                "buttonUrl": "/contact",
+                "gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+              },
+              "cardStyle": {
+                "showIcons": true,
+                "coloredBorders": true,
+                "animation": "fade"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "complianceTemplate": {
+    "name": "Compliance Checklist Section",
+    "description": "Compliance requirements section with expandable cards",
+    "model": "section",
+    "data": {
+      "blocks": [
+        {
+          "id": "compliance-header",
+          "component": {
+            "name": "Card",
+            "options": {
+              "title": "Compliance Requirements",
+              "description": "Federal, state, and local requirements based on your employee count and location",
+              "backgroundColor": "#f9fafb",
+              "shadow": "md",
+              "rounded": "xl"
+            }
+          }
+        },
+        {
+          "id": "compliance-component",
+          "component": {
+            "name": "Compliance Checklist",
+            "options": {
+              "prospectId": "{{state.prospectId}}",
+              "title": "Your Compliance Requirements",
+              "showDeadlines": true,
+              "expandable": true,
+              "colors": {
+                "federal": "#3b82f6",
+                "state": "#10b981",
+                "local": "#f59e0b"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "chartsTemplate": {
+    "name": "Analytics Charts Section",
+    "description": "Grid of data visualization charts",
+    "model": "section",
+    "data": {
+      "blocks": [
+        {
+          "id": "charts-grid",
+          "component": {
+            "name": "Box",
+            "options": {
+              "style": {
+                "display": "grid",
+                "gridTemplateColumns": "repeat(auto-fit, minmax(500px, 1fr))",
+                "gap": "24px",
+                "padding": "24px"
+              }
+            }
+          },
+          "children": [
+            {
+              "id": "montecarlo-card",
+              "component": {
+                "name": "Card",
+                "options": {
+                  "title": "Monte Carlo Simulation",
+                  "description": "Risk analysis with 10,000 iterations",
+                  "shadow": "lg",
+                  "rounded": "xl"
+                }
+              },
+              "children": [
+                {
+                  "id": "montecarlo-chart",
+                  "component": {
+                    "name": "Monte Carlo Line Chart",
+                    "options": {
+                      "prospectId": "{{state.prospectId}}",
+                      "height": 400,
+                      "showLegend": true,
+                      "lineColor": "#8b5cf6"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "insurance-split-card",
+              "component": {
+                "name": "Card",
+                "options": {
+                  "title": "Insurance Cost Split",
+                  "description": "10% of employees drive 85% of costs",
+                  "shadow": "lg",
+                  "rounded": "xl"
+                }
+              },
+              "children": [
+                {
+                  "id": "insurance-split-chart",
+                  "component": {
+                    "name": "Insurance Split Pie Chart",
+                    "options": {
+                      "prospectId": "{{state.prospectId}}",
+                      "height": 400,
+                      "colors": {
+                        "high": "#ef4444",
+                        "standard": "#10b981"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "savings-card",
+              "component": {
+                "name": "Card",
+                "options": {
+                  "title": "Savings Vehicle Impact",
+                  "description": "Cost comparison with and without savings vehicle",
+                  "shadow": "lg",
+                  "rounded": "xl"
+                }
+              },
+              "children": [
+                {
+                  "id": "savings-chart",
+                  "component": {
+                    "name": "Savings Impact Bar Chart",
+                    "options": {
+                      "prospectId": "{{state.prospectId}}",
+                      "height": 400,
+                      "colors": {
+                        "actual": "#3b82f6",
+                        "withSavings": "#10b981",
+                        "withoutSavings": "#ef4444"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "fullDashboardComposite": {
+    "name": "Complete Dashboard (Composite)",
+    "description": "Full dashboard with all sections combined",
+    "model": "page",
+    "urlPath": "/dashboard/:prospectId/complete",
+    "data": {
+      "blocks": [
+        {
+          "id": "dashboard-header",
+          "component": {
+            "name": "Box",
+            "options": {
+              "style": {
+                "background": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                "padding": "48px 24px",
+                "color": "white",
+                "textAlign": "center",
+                "marginBottom": "32px"
+              }
+            }
+          },
+          "children": [
+            {
+              "id": "dashboard-title",
+              "component": {
+                "name": "Text",
+                "options": {
+                  "text": "<h1>{{state.companyName}} - Insurance Analysis</h1>",
+                  "style": {
+                    "fontSize": "36px",
+                    "fontWeight": "bold",
+                    "marginBottom": "12px"
+                  }
+                }
+              }
+            },
+            {
+              "id": "dashboard-date",
+              "component": {
+                "name": "Text",
+                "options": {
+                  "text": "<p>Generated on {{state.generatedDate}}</p>",
+                  "style": {
+                    "fontSize": "16px",
+                    "opacity": 0.9
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "dashboard-container",
+          "component": {
+            "name": "Box",
+            "options": {
+              "style": {
+                "maxWidth": "1400px",
+                "margin": "0 auto",
+                "padding": "0 24px"
+              }
+            }
+          },
+          "children": [
+            {
+              "id": "charts-section",
+              "component": {
+                "name": "Symbol",
+                "options": {
+                  "symbol": {
+                    "model": "section",
+                    "entry": "chartsTemplate"
+                  }
+                }
+              }
+            },
+            {
+              "id": "compliance-section",
+              "component": {
+                "name": "Symbol",
+                "options": {
+                  "symbol": {
+                    "model": "section",
+                    "entry": "complianceTemplate"
+                  }
+                }
+              }
+            },
+            {
+              "id": "sniper-section",
+              "component": {
+                "name": "Symbol",
+                "options": {
+                  "symbol": {
+                    "model": "section",
+                    "entry": "sniperMarketingTemplate"
+                  }
+                }
+              }
+            },
+            {
+              "id": "cta-footer",
+              "component": {
+                "name": "Box",
+                "options": {
+                  "style": {
+                    "textAlign": "center",
+                    "marginTop": "64px",
+                    "padding": "48px 24px",
+                    "background": "#f9fafb",
+                    "borderRadius": "16px"
+                  }
+                }
+              },
+              "children": [
+                {
+                  "id": "footer-title",
+                  "component": {
+                    "name": "Text",
+                    "options": {
+                      "text": "<h3>Ready to Implement These Insights?</h3>",
+                      "style": {
+                        "fontSize": "24px",
+                        "fontWeight": "bold",
+                        "marginBottom": "16px"
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "footer-cta",
+                  "component": {
+                    "name": "CTA Button",
+                    "options": {
+                      "text": "Download Full Report",
+                      "url": "/api/generate-pdf?prospectId={{state.prospectId}}",
+                      "size": "lg",
+                      "gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "state": {
+        "prospectId": {
+          "type": "string",
+          "default": ""
+        },
+        "companyName": {
+          "type": "string",
+          "default": "Your Company"
+        },
+        "generatedDate": {
+          "type": "string",
+          "default": ""
+        }
+      }
+    },
+    "meta": {
+      "title": "Complete Dashboard | IMO Calculator",
+      "description": "Full insurance analysis report with charts and recommendations"
+    }
+  }
+}

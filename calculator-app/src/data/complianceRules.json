@@ -1,0 +1,293 @@
+{
+  "federal": [
+    {
+      "threshold": 1,
+      "requirement": "ERISA",
+      "description": "Employee Retirement Income Security Act - governs employee benefit plans",
+      "required": true,
+      "category": "benefits"
+    },
+    {
+      "threshold": 1,
+      "requirement": "HIPAA Privacy & Security",
+      "description": "Health Insurance Portability and Accountability Act - protect health information",
+      "required": true,
+      "category": "privacy"
+    },
+    {
+      "threshold": 1,
+      "requirement": "Form 5500",
+      "description": "Annual filing for benefit plans (due 7 months after plan year ends)",
+      "required": true,
+      "deadline": "July 31 (for calendar year plans)",
+      "category": "filing"
+    },
+    {
+      "threshold": 20,
+      "requirement": "COBRA",
+      "description": "Consolidated Omnibus Budget Reconciliation Act - continuation of health coverage",
+      "required": true,
+      "category": "benefits"
+    },
+    {
+      "threshold": 50,
+      "requirement": "ACA Employer Mandate",
+      "description": "Affordable Care Act - must offer health insurance to full-time employees",
+      "required": true,
+      "category": "coverage"
+    },
+    {
+      "threshold": 50,
+      "requirement": "ACA Reporting (Form 1095-C)",
+      "description": "File forms 1094-C and 1095-C with the IRS",
+      "required": true,
+      "deadline": "March 1 (paper) / March 31 (electronic)",
+      "category": "filing"
+    },
+    {
+      "threshold": 100,
+      "requirement": "Form 5500 Schedule H",
+      "description": "Detailed financial information for large group health plans",
+      "required": true,
+      "deadline": "July 31 (for calendar year plans)",
+      "category": "filing"
+    }
+  ],
+  "state": {
+    "PA": [
+      {
+        "threshold": 1,
+        "requirement": "PA Health Insurance Continuation",
+        "description": "Pennsylvania Mini-COBRA for employers under 20 employees",
+        "required": true,
+        "maxThreshold": 19,
+        "category": "continuation"
+      },
+      {
+        "threshold": 20,
+        "requirement": "PA State Tax Filings",
+        "description": "Quarterly state tax filings for health benefit plans",
+        "required": true,
+        "deadline": "Quarterly",
+        "category": "tax"
+      },
+      {
+        "threshold": 50,
+        "requirement": "PA Self-Insurance Reporting",
+        "description": "Annual reporting for self-insured health plans",
+        "required": false,
+        "deadline": "March 1",
+        "category": "insurance"
+      }
+    ],
+    "OH": [
+      {
+        "threshold": 1,
+        "requirement": "OH Continuation Coverage",
+        "description": "Ohio continuation coverage for employers under 20 employees",
+        "required": true,
+        "maxThreshold": 19,
+        "category": "continuation"
+      },
+      {
+        "threshold": 50,
+        "requirement": "OH State Disability Reporting",
+        "description": "Report disability coverage to Ohio Bureau of Workers' Compensation",
+        "required": true,
+        "deadline": "Annually",
+        "category": "disability"
+      },
+      {
+        "threshold": 100,
+        "requirement": "OH Large Group Filings",
+        "description": "Additional filings for large group health plans",
+        "required": true,
+        "deadline": "Quarterly",
+        "category": "filing"
+      }
+    ],
+    "CA": [
+      {
+        "threshold": 5,
+        "requirement": "CA Health Insurance Mandate",
+        "description": "California requires employers with 5+ employees to offer health insurance",
+        "required": true,
+        "category": "coverage"
+      },
+      {
+        "threshold": 2,
+        "requirement": "Cal-COBRA",
+        "description": "California continuation coverage for employers with 2-19 employees",
+        "required": true,
+        "maxThreshold": 19,
+        "category": "continuation"
+      },
+      {
+        "threshold": 50,
+        "requirement": "CA Paid Family Leave Contribution",
+        "description": "Employer contribution to state paid family leave program",
+        "required": true,
+        "deadline": "Quarterly",
+        "category": "tax"
+      },
+      {
+        "threshold": 1,
+        "requirement": "CA Privacy Rights (CCPA/CPRA)",
+        "description": "California Consumer Privacy Act - health data protection requirements",
+        "required": true,
+        "category": "privacy"
+      }
+    ],
+    "NY": [
+      {
+        "threshold": 1,
+        "requirement": "NY Paid Family Leave",
+        "description": "Employers must provide paid family leave insurance",
+        "required": true,
+        "category": "benefits"
+      },
+      {
+        "threshold": 1,
+        "requirement": "NY Health Insurance Continuation",
+        "description": "Mini-COBRA for employers with fewer than 20 employees",
+        "required": true,
+        "maxThreshold": 19,
+        "category": "continuation"
+      },
+      {
+        "threshold": 50,
+        "requirement": "NY State Health Insurance Exchange Filing",
+        "description": "Report coverage options to NY State of Health",
+        "required": true,
+        "deadline": "Annually",
+        "category": "filing"
+      },
+      {
+        "threshold": 1,
+        "requirement": "NY SHIELD Act Compliance",
+        "description": "Stop Hacks and Improve Electronic Data Security - protect health data",
+        "required": true,
+        "category": "privacy"
+      }
+    ],
+    "MA": [
+      {
+        "threshold": 11,
+        "requirement": "MA Health Care Reform",
+        "description": "Employers with 11+ employees must offer health insurance",
+        "required": true,
+        "category": "coverage"
+      },
+      {
+        "threshold": 1,
+        "requirement": "MA Paid Family and Medical Leave",
+        "description": "Contribution to state paid family and medical leave program",
+        "required": true,
+        "deadline": "Quarterly",
+        "category": "tax"
+      },
+      {
+        "threshold": 50,
+        "requirement": "MA Fair Share Contribution",
+        "description": "Employer contribution if 25%+ employees use state health insurance",
+        "required": false,
+        "category": "tax"
+      }
+    ],
+    "TX": [
+      {
+        "threshold": 1,
+        "requirement": "TX Continuation Coverage",
+        "description": "Texas continuation coverage for employers under 20 employees",
+        "required": true,
+        "maxThreshold": 19,
+        "category": "continuation"
+      },
+      {
+        "threshold": 50,
+        "requirement": "TX Health Insurance Portability",
+        "description": "State portability requirements for group health plans",
+        "required": true,
+        "category": "coverage"
+      }
+    ],
+    "FL": [
+      {
+        "threshold": 1,
+        "requirement": "FL Mini-COBRA",
+        "description": "Florida continuation coverage for employers under 20 employees",
+        "required": true,
+        "maxThreshold": 19,
+        "category": "continuation"
+      },
+      {
+        "threshold": 50,
+        "requirement": "FL State Health Insurance Filings",
+        "description": "Annual filings for group health plans",
+        "required": true,
+        "deadline": "March 1",
+        "category": "filing"
+      }
+    ],
+    "IL": [
+      {
+        "threshold": 1,
+        "requirement": "IL Continuation Coverage",
+        "description": "Illinois continuation coverage (9 months for employers under 20)",
+        "required": true,
+        "maxThreshold": 19,
+        "category": "continuation"
+      },
+      {
+        "threshold": 50,
+        "requirement": "IL Mental Health Parity Reporting",
+        "description": "Report mental health coverage compliance",
+        "required": true,
+        "deadline": "Annually",
+        "category": "coverage"
+      }
+    ]
+  },
+  "local": {
+    "SF": {
+      "name": "San Francisco",
+      "state": "CA",
+      "requirements": [
+        {
+          "threshold": 1,
+          "requirement": "SF Health Care Security Ordinance",
+          "description": "San Francisco employers must contribute to employee health coverage",
+          "required": true,
+          "category": "coverage"
+        },
+        {
+          "threshold": 20,
+          "requirement": "SF Paid Sick Leave",
+          "description": "Employers must provide paid sick leave",
+          "required": true,
+          "category": "benefits"
+        }
+      ]
+    },
+    "NYC": {
+      "name": "New York City",
+      "state": "NY",
+      "requirements": [
+        {
+          "threshold": 1,
+          "requirement": "NYC Paid Safe and Sick Leave",
+          "description": "New York City employers must provide paid safe and sick leave",
+          "required": true,
+          "category": "benefits"
+        },
+        {
+          "threshold": 1,
+          "requirement": "NYC Earned Safe and Sick Time Act",
+          "description": "Accrual and usage requirements for sick time",
+          "required": true,
+          "category": "benefits"
+        }
+      ]
+    }
+  }
+}

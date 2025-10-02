@@ -1,0 +1,170 @@
+{
+  "version": "1.0.0",
+  "registry_name": "sales-process-imo",
+  "description": "MCP server registry for Sales Process IMO with Builder.io integration",
+  "servers": {
+    "composio_mcp": {
+      "url": "http://localhost:3001",
+      "context": "main",
+      "description": "Primary Composio MCP server for all external API operations",
+      "endpoints": {
+        "tools": {
+          "composio_tool": "/tool",
+          "gmail_send": "/tool",
+          "sheets_append": "/tool",
+          "drive_upload": "/tool",
+          "calendar_create": "/tool",
+          "builder_create_content": "/tool",
+          "builder_update_content": "/tool",
+          "builder_get_content": "/tool",
+          "builder_publish_content": "/tool",
+          "neon_insert": "/tool",
+          "neon_query": "/tool"
+        },
+        "resources": {
+          "mcp_health": "/mcp/health",
+          "connected_accounts": "/tool"
+        }
+      },
+      "required": true,
+      "priority": 1
+    },
+    "builder_sales": {
+      "url": "http://localhost:3030",
+      "context": "sales-ui",
+      "description": "Builder.io server for Sales repo UI component management",
+      "endpoints": {
+        "tools": {
+          "builder_create_content": "/mcp/tools/builder_create_content",
+          "builder_update_content": "/mcp/tools/builder_update_content",
+          "builder_get_content": "/mcp/tools/builder_get_content",
+          "builder_delete_content": "/mcp/tools/builder_delete_content",
+          "builder_publish_content": "/mcp/tools/builder_publish_content",
+          "builder_list_models": "/mcp/tools/builder_list_models",
+          "sync_component": "/mcp/tools/sync_component",
+          "register_component": "/mcp/tools/register_component"
+        },
+        "resources": {
+          "builder_models": "/mcp/resources/builder/models",
+          "builder_components": "/mcp/resources/builder/components",
+          "builder_pages": "/mcp/resources/builder/pages",
+          "sync_status": "/mcp/resources/sync/status"
+        },
+        "prompts": {
+          "generate_component": "/mcp/prompts/generate_component",
+          "update_props": "/mcp/prompts/update_props",
+          "create_page": "/mcp/prompts/create_page"
+        }
+      },
+      "config": {
+        "apiKey": "BUILDER_API_KEY",
+        "projectId": "SALES_PROJECT_ID",
+        "organizationId": "SALES_ORG_ID",
+        "configFile": "./builder.config.json"
+      },
+      "required": false,
+      "priority": 2
+    },
+    "sidecar": {
+      "url": "http://localhost:8000",
+      "context": "telemetry",
+      "description": "Sidecar server for event logging and telemetry",
+      "endpoints": {
+        "tools": {
+          "log_event": "/log",
+          "query_events": "/events"
+        },
+        "resources": {
+          "health": "/health",
+          "stats": "/stats"
+        }
+      },
+      "required": false,
+      "priority": 3
+    },
+    "firebase_functions": {
+      "url": "http://localhost:5001",
+      "context": "backend",
+      "description": "Firebase Cloud Functions emulator",
+      "endpoints": {
+        "tools": {
+          "process_factfinder": "/PROJECT_ID/us-central1/processFactfinder",
+          "generate_pdf": "/PROJECT_ID/us-central1/generatePdf",
+          "promote_to_neon": "/PROJECT_ID/us-central1/promoteToNeon",
+          "trigger_promotion": "/PROJECT_ID/us-central1/triggerPromotion"
+        },
+        "resources": {
+          "functions_health": "/health"
+        }
+      },
+      "required": false,
+      "priority": 4
+    }
+  },
+  "routing": {
+    "builder_io": {
+      "primary": "composio_mcp",
+      "fallback": "builder_sales",
+      "description": "All Builder.io operations route through Composio MCP first, fallback to direct Builder server"
+    },
+    "neon": {
+      "primary": "composio_mcp",
+      "description": "All Neon database operations route through Composio MCP only"
+    },
+    "external_apis": {
+      "primary": "composio_mcp",
+      "description": "All external API calls (Gmail, Sheets, Drive, etc.) route through Composio MCP only"
+    }
+  },
+  "heir_compliance": {
+    "payload_format": "HEIR/ORBT",
+    "unique_id_pattern": "HEIR-YYYY-MM-SYSTEM-MODE-VN",
+    "process_id_pattern": "PRC-SYSTEM-EPOCHTIMESTAMP",
+    "orbt_layer": 2,
+    "blueprint_version": "1.0"
+  },
+  "startup_sequence": [
+    {
+      "order": 1,
+      "server": "composio_mcp",
+      "command": "cd mcp-servers/composio-mcp && node server.js",
+      "wait_for_health": true,
+      "timeout": 10000
+    },
+    {
+      "order": 2,
+      "server": "sidecar",
+      "command": "python src/sidecar_server.py",
+      "wait_for_health": true,
+      "timeout": 5000
+    },
+    {
+      "order": 3,
+      "server": "builder_sales",
+      "command": "npx builder-mcp-server --config builder.config.json",
+      "wait_for_health": false,
+      "timeout": 5000
+    },
+    {
+      "order": 4,
+      "server": "firebase_functions",
+      "command": "cd calculator-app && firebase emulators:start --only functions",
+      "wait_for_health": false,
+      "timeout": 15000
+    }
+  ],
+  "environment": {
+    "required_vars": [
+      "COMPOSIO_API_KEY",
+      "IMOCREATOR_MCP_URL",
+      "BUILDER_API_KEY",
+      "SALES_PROJECT_ID",
+      "FIREBASE_PROJECT_ID"
+    ],
+    "optional_vars": [
+      "SALES_ORG_ID",
+      "IMOCREATOR_SIDECAR_URL",
+      "IMOCREATOR_BEARER_TOKEN"
+    ]
+  }
+}
