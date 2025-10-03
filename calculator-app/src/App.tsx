@@ -1,18 +1,28 @@
 import React from 'react';
-import { Factfinder } from './components/Factfinder';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Layout } from './components/Layout';
+import { FactfinderEnhanced } from './components/FactfinderEnhanced';
 import { DashboardEnhanced } from './components/DashboardEnhanced';
+import { HomePage } from './pages/HomePage';
 
 function App() {
-  // Simple routing based on URL path
-  const path = window.location.pathname;
-  const dashboardMatch = path.match(/^\/dashboard\/(.+)$/);
+  return (
+    <Router>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/factfinder" element={<FactfinderEnhanced />} />
+          <Route path="/dashboard/:prospectId" element={<DashboardRoute />} />
+        </Routes>
+      </Layout>
+    </Router>
+  );
+}
 
-  if (dashboardMatch) {
-    const prospectId = dashboardMatch[1];
-    return <DashboardEnhanced prospectId={prospectId} />;
-  }
-
-  return <Factfinder />;
+// Route wrapper to extract prospectId param
+function DashboardRoute() {
+  const prospectId = window.location.pathname.split('/dashboard/')[1];
+  return <DashboardEnhanced prospectId={prospectId} />;
 }
 
 export default App;
